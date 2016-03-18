@@ -66,4 +66,28 @@ req = request.Request(url ,querystring.encode('ascii'), hearders=headers)
 u = request.urlopen(req)
 resp = u.read()
 
+--------------------------------------------------------------------------
+--------------------------------------------------------------------------
+# If you have read request lib ,you will konw ,we could use function like this:
+
+import requests
+
+# Base URL being accessed
+url = 'http://httpin.org/post'
+# Dictionary of query paameters (if any)
+parms = {
+	'name1':'value1',
+	'name2':'value2'
+	}
+
+# Extra headers
+headers = {
+	'User-agent ' : 'none/ofyoubusiness',
+	'Spam' : 'Eggs'
+	}
+
+resp = request.post(url, data =parms, headers =headers)
+
+# Decode text returned by the request
+text = resp.text
 

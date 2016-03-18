@@ -72,6 +72,32 @@ resp = u.read()
 
 import requests
 
-#Base URL being accessed
+# Base URL being accessed
 url = 'http://httpin.org/post'
+# Dictionary of query paameters (if any)
+parms = {
+	'name1':'value1',
+	'name2':'value2'
+	}
 
+# Extra headers
+headers = {
+	'User-agent ' : 'none/ofyoubusiness',
+	'Spam' : 'Eggs'
+	}
+
+resp = request.post(url, data =parms, headers =headers)
+
+# Decode text returned by the request
+text = resp.text
+
+---------------------------------------------------------------------------
+---------------------------------------------------------------------------
+# If we use request lib post a HEAD ask, and get some information form Http headers
+
+import request
+
+resp = requests.head('http://www.python.org/index.html')
+
+status = resp.status_code
+last_modified =resp
