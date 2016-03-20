@@ -88,7 +88,16 @@ public class BoyerMoore
 		}
 		return N;
 	}
-	public static void main (String[] args)
+	public static void main(String[] args)
 	{
+		String pat = args[0];
+		String txt = args[1];
+		KMP kmp = new KMP(pat);
+		StdOut.println("text:      " + text);
+		int offset = kmp.search(text);
+		StdOut.print("pattern: ");
+		for(int i = 0; i < offset; i++)
+			StdOut.print(" ");
+		StdOut.println(pat);
 	}
 }
