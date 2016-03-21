@@ -65,5 +65,33 @@ public String longestPrefixOf(String s)
 }
 
 private int search(Node x, String xs, int d, int length)
-{
+{	
+	if(x == null) 		return length;
+	if(x.val != null) 	length = d;
+	if(d == s.length())	return length;
+	char c = s.charAt(d);
+	return search(x.next[c], s d+1, length);
+}
 
+// delete a key in a String Tree 
+
+public void delete(String key)
+{	root = delete(root, key, 0);	}
+
+private Node delete(Node x, String key, int d)
+{
+	if(x == null) return null;
+	if(d == key.length())
+		x.val = null;
+	else
+	{
+		char c = key.charAt(d);
+		x.next[c] = delete(x.next[c], key, d+1);
+	}
+
+	if(x.val != null) return x;
+	for(char c =0; c<R; c++)
+	       if(x.next[c] != null)	return x;
+	return null;
+}	
+//This is from algs 4th . 5.2.2 string operation  	
