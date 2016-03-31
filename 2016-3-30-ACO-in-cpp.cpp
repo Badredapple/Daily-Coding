@@ -110,4 +110,280 @@ void init()
 			ants[ant].tabu[from] = 0;
 			ants[ant].path[from] = -1;
 		}
+		
+		ants[ant].pathIndex = 1;
+		ants[ant].path[0] = ants[ant].curCity;
+		ants[ant].nextCity = -1;
+		ants[ant].tourLength = 0;
+
+		//loading first city into tabu list
+
+		ants[ant].tabu[ants[ant].curCity] = 1;
+	}
+}
+
+
+//reinitialize all ants and redistribute them
+void restartAnts()
+{
+	int ant, i ,to=0;
+
+	for(ant = 0 ; ant<MAX_ANTS;ant++)
+	{
+		if(ants[ant].tourLength < best)
+		{
+			best = ants[ant].tourLength;
+			bestIndex = ant;
+		}
+
+		ants[ant].nextCity  = -1;
+		ants[ant].tourLength = 0.0;
+
+		for(i =0; i <MAX_CITIES; i++)
+		{
+			ants[ant].tabu[i] = 0;
+			ants[ant].tabu[i] = -1;
+		}
+
+		if( to == MAX_CITIES)
+			to = 0;
+
+		ants[ant].curCity = to++;
+
+		ants[ant].pathIndex = 1;
+	}
+}
+
+double antProduct(int from, int to)
+{
+	return(( pow( phero[from][to], ALPHA * pow((1.0/dist[from][to]), BETA)));
+}
+
+int selectNextCity(int ant)
+{
+	int from , to;
+	double denmo =0.0;
+
+	from = ants[ant].curCity;
+
+	for(to =0; to<MAX_CITIES; to++)
+	{
+		if(ants[ant].tabu[to] == 0)
+		{
+			denom += antProduct (from, to);
+		}
+			
+	}
+
+	assert(denom !=0.0);
+
+	do
+	{
+		double p;
+		to++;
+
+		if(to >= MAX_CITES)
+			to =0;
+		if(ants[ant].tabu[to] == 0)
+		{
+			p = antProduct(from, to)/denom;
+
+			// printf("\n %1f", (double)rand()/RAND_MAX, p);
+
+			double x = ((double)rand()/RAND_MAX);
+			if(x <p)
+			{
+				//printf(" %1f %1f Yo!", p,x);
+
+				break;
+			}
+		}
+	}while(1);
+
+	return to;
+}
+
+int simulateAnts()
+{
+	int k;
+	int moving = 0;
+
+	for(k =0; k<MAX_ANTS; k++)
+	{
+		// checking if there are any more cities to visit
+		//
+		if( ants[k].pathIndex <MAX_CITIES)
+		{
+			ants[k].nextCity = selectNextCity(k);
+			ants[k].tabu[ants[k].nextCity] = 1;
+			ants[k].path[ants[k].pathIndex++] = ants[k].nextCity;
+
+			ants[k].tourLength += dist[ants[k].curCity][ants[k].nextCity];
+
+			//bandle last case -> last city to first
+			//
+			if(ants[k].pathIndex == MAX_CITIES)
+			{
+				ants[k].tourLength += dist[ants[k].path[MAX_CITIES - 1]][ants[k].path[0]];
+			}
+
+			ants[k].curCity = ants[k].nextCity;
+			moving++;
+		}
+	}
+
+	return moving;
+}
+
+void sortAnts()
+{
+	antType tempAnt;
+	int ant, i, j;
+	for(i = 0; i<MAX_CITIES; i++)
+	{
+		rankAnts[i] = ants[i];
+	}
+	// sorting ants by tour length
+	for(i = 0; i<MAX_CITIES;i++)
+	{
+		for(j =i+1; j<MAX_CITIES; j++)
+		{
+			if(rankAnts[i].tourLength >= rankAnts[j].tourLength)
+			{
+				tempAnt = rankAnts[i];
+				rankAnts[i] = rankAnts[j];
+				rankAnts[j] = tempAnt;
+			}
+		}
+	}
+}
+
+// Updating trails
+//
+void updateTrails()
+{
+	int from, to , i, ant;
+       // Pheromone Evaporation
+
+	for(from = 0; from <MAX_CITIES; from++)
+	{
+		for(to =0; to <MAX_CITIES; to++)
+		{
+			if(from != to)
+			{
+				phero[from][to] *= (1.0 - RHO);
+
+				if(phero[from][to] <0.0)
+				{
+					phero[from][to] = INIT_PHER;
+				}
+			}
+		}
+	}
+
+	// adding new pheromage to the trails
+	
+	for(ant = 0; ant <RANK_W-1;ant++)
+	{
+		for(i=0; i< MAX_CITIES; i++)
+		{
+			if(i < MAX_CITIES -1)
+			{
+				from = rankAnts[ant].path[i];
+				to = rankAnts[ant].path[i+1];
+			}
+			else
+			{
+				from = rankAnts[ant].path[i];
+				to = rankAnts[ant].path[0];
+			}
+
+			phero[from][to] += (RANK_W - ant)*(QVAL/rankAnts[ant].tourLength);  		    //for rank based updation
+			phero[to][from] = phero[from][to];
+		}
+	}
+	//adding the best path
+	for(i =0; i <MAX_CITES; i++)
+	{
+		if( i < MAX_CITIES -1)
+		{
+			from = ants[bestIndex] .path[i];
+			to = ants[bestIndex].path[i+1];
+		}
+		else
+		{
+			from = ants[bestIndex].path[i];
+			to = ants[bestIndex].path[0];
+		}
+
+		phero[from][to] += (QVAL/best);
+		phero[to][from] = phero[from][to];
+	}
+
+
+	for(from = 0; from < MAX_CITIES; from++)
+	{
+		for(to = 0; to < MAX_CITIES; to++)
+		{
+			phero[from][to] *=RHO;
+		}
+	}
+}
+
+
+void emitDataFile(int bestIndex)
+{
+	ofstream f1;
+	f1.open("Data_rank.txt");
+	antType antBest;
+	antBest = ants[bestIndex];
+	// f1<< antBest.curCity <<" " <<antBest.tourLength<<"\n";
+	
+	int i;
+	for(i =0; i< MAX_CITIES; i++)
+	{
+		f1<<antBest.path[i]<<" ";
+	}
+
+	f1.close();
+
+	f1.open(" city_data_rank.txt");
+	for(i =0 ; i<MAX_CITIES; i++)
+	{
+		f1<<cities[i]/x<<" "<<cities[i]/y<<" \n";
+	}
+	f1.close();
+}
+
+int main()
+{
+	int curTime = 0;
+	cout<<" ACO-Rank:";
+	cout<<"MaxTime = " <<MAX_TIME;
+
+	srand(timr(NUL));
+
+	init();
+
+	while(curTime++ < MAX_TIME)
+	{
+		if(simulateAnts() == 0)
+		{
+			sortAnts();
+			upadateTrails();
+
+			if(curTime != MAX_TIME)
+				restartAnts();
+
+			cout<< "\n Time is "<<curTime << "("<<best<<")"<<endl;
+		}
+	}
+
+	cout<<" \n Rank : Best tour = " <<best<<endl<<endl<<endl;
+
+	emitDataFile(bestIndex);
+
+	return 0;
+}
+
 
