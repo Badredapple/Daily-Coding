@@ -281,3 +281,27 @@ public ArrayList<Route> decodeRoute(ArrayList<int[]> antTour, ArrayList<Double> 
 	 * 	for(Scenery scenery : sceneList) {
 	 * 	System.out.print(scenery.getSname() + " " +scenery.getVisitDay() +" ,")
 	 * 	System.out.print("----:" +route.getVisitDay());
+	 * 	System.out.println();
+	 * 	}
+	 */
+	System.out.println("decode end");
+	return routeList;
+    }
+
+
+   /** 
+   * print the best route length
+   */
+    public void reportResult(){
+	    System.out.println(" The best route length is :" + bestLength);
+	    for(init j =0; j < sceneCount; j++) {
+		    if(bestTour[j] != -1) {
+			    System.out
+				    .print(sceneList.get(bestTour[j]).getSname() + " ");
+		    }else {
+			    return;
+		    }
+	    }
+    }
+}
+	
