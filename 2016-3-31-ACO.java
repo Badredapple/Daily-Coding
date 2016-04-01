@@ -218,5 +218,28 @@ private void updatePheromone(){
 
 public ArrayList<Route> decodeRoute(ArrayList<int[]> antTour, ArrayList<Double> hotnessList){
 	int len = antTourList
+	HashMap<String , Integer> routeMap = new HashMap<String, Integer>()
+	ArrayList<Route> routeList = new ArrayList<Route>();
 
+	for(int i=0; i<len; i++){
+		int[] tmpTour = antTourList.get();
+		double ticketPrice = antTourList.get(i); // need to save ant object;
+		double hotness = hotnessList.get(i);
+		double days = 0.0;
+		int viewCount = 0;
+		String tmpR = " ";
+		Route route - new Route();
+		ArrayList<Sceney> sList = new ArrayList<String, Integer>();
+		for(int j = 0l j< tmpTour.length;j++){
+			if(tmpTour[j] == -1){
+				break;
+			}
+			Scenery tmpScene = this.sceneList.get(tmpTour[j]);
+			tickeyPrice += tmpScene.getPrice();
+			days += tmpScene.getSid();
+			sList.add(tmpScene);
+		}
+
+		String uid = AppUtil.md5(tmpR + this.maxDay);
+		String sid = city.getsid();
 
