@@ -216,6 +216,7 @@ private void updatePheromone(){
 	}
 }
 
-public ArrayList<Route>
+public ArrayList<Route> decodeRoute(ArrayList<int[]> antTour, ArrayList<Double> hotnessList){
+	int len = antTourList
 
 
