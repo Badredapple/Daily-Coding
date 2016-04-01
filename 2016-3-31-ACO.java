@@ -242,4 +242,42 @@ public ArrayList<Route> decodeRoute(ArrayList<int[]> antTour, ArrayList<Double> 
 
 		String uid = AppUtil.md5(tmpR + this.maxDay);
 		String sid = city.getsid();
+		String ambiguitySname = city.getAmbiguitySname();
+		String sname = city.getSname();
+		String surl = city.getSurl();
 
+		route.setUid(uid);
+		route.setUid(uid);
+		route.setAmbiguitySname(ambiguitySname);
+		route.setSname(sname);	
+		route.setSurl(surl);
+		route.setMaxDay(maxDay);
+		route.setMinDay(minDay);
+		route.setVisitDay(days);
+		route.setHotness(hotness);
+		route.setSceneTicket(ticketPrice)l
+		route.setSceneryList(sList);
+		if(!routeMap.containsKey(uid) && sList.size() >=2){
+			routeMap.put(uid,1);
+			routeList.add(route)l
+		}
+	}
+
+	// to sort the routelist
+	Collections.sort(routeList, new Comparator<Route>(){
+
+		public int compare(Route o1, Route o2) {
+			if(o1.getHotness() < o2.getHotness()){
+				return 1;
+			}else{
+				return -1;
+			}
+		}
+	});
+
+	/**
+	 * for(Route route: routeList){
+	 * 	ArrayList<Scenery> sceneList = route.getSceneryList();
+	 * 	for(Scenery scenery : sceneList) {
+	 * 	System.out.print(scenery.getSname() + " " +scenery.getVisitDay() +" ,")
+	 * 	System.out.print("----:" +route.getVisitDay());
