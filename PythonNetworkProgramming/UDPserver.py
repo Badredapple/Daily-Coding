@@ -1,20 +1,18 @@
-#now let talk about a UDP connection.
-import socket, traceback
+#This is UDP server in python
+#I will try it under linux
 
-host = ''
-port = 51423
+import socket
 
-s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR,1)
-s.bind((host,port))
+server = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+server.bind(("127.0.0.1", 17800))
+print ("UDP server is start !")
 
-while 1:
-	try:
-	 message,address = s.recvfrom(8192)
-	 print 'got data from ', address
-	 #echo it back
-	 s.sendto(message, address)
-	except (keyboardInterrupt, SystemExit):
-		raise
-	except:
-		traceback.print_exc()
+while True:
+	data.addr = server.recvfrom(1024)
+	text = str(data, encoding = "utf-8")
+	print("addrss  is : %s data:%s" %(addr.text))
+	if text == "quit":
+		break;
+
+prinit("UDP server is finish")
+server.close()
